@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-route for handling Amenity objects and operations.
+route for handling Amenity objects and operations
 """
 from flask import jsonify, abort, request
 from api.v1.views import app_views, storage
@@ -96,4 +96,4 @@ def amenity_delete_by_id(amenity_id):
     storage.delete(fetched_obj)
     storage.save()
 
-    return jsonify({})
+    return jsonify({}) 
