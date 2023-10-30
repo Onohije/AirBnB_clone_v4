@@ -1,42 +1,45 @@
 #!/usr/bin/python3
 """
-0x05. AirBnB clone - RESTful API
+app
 """
 
 from flask import Flask, jsonify
 from flask_cors import CORS
-from models import storage
-from api.v1.views import app_views
-from os import environ
+from os import getenv
 
-#  Get host and port from environ if defined
-if environ.get('HBNB_API_HOST') is None:
-    HBNB_API_HOST = "0.0.0.0"
-else:
-    HBNB_API_HOST = environ.get('HBNB_API_HOST')
-if environ.get('HBNB_API_PORT') is None:
-    HBNB_API_PORT = 5000
-else:
-    HBNB_API_PORT = environ.get('HBNB_API_PORT')
+from api.v1.views import app_views
+from models import storage
 
 
 app = Flask(__name__)
-CORS(app, resources={"/*": {"origins": "0.0.0.0"}})
+
+CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
+
 app.register_blueprint(app_views)
-app.url_map.strict_slashes = False
 
 
 @app.teardown_appcontext
-def close_storage(exception=None):
-    """Close any active SQLAlchemy sessions"""
+def teardown(exception):
+    """
+    teardown function
+    """
     storage.close()
 
 
 @app.errorhandler(404)
-def not_found(error):
-    """ Error 404 """
-    return jsonify({'error': 'Not found'}), 404
+def handle_404(exception):
+    """
+    handles 404 error
+    :return: returns 404 json
+    """
+    data = {
+        "error": "Not found"
+    }
 
+    resp = jsonify(data)
+    resp.status_code = 404
 
-if __name__ == '__main__':
-    app.run(host=HBNB_API_HOST, port=HBNB_API_PORT, threaded=True)
+    return(resp)
+
+if __name__ == "__main__":
+    app.run(getenv("HBNB_API_HOST"), getenv("HBNB_API_PORT"))
